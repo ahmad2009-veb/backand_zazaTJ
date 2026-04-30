@@ -8,21 +8,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-/**
- * Обрабатывает заявки от ресторанов-партнёров и B2B-клиентов
- * с лендинга zazaTJ (React).
- *
- * GET|POST /api/v1/partner-request/restaurant
- * GET|POST /api/v1/partner-request/b2b
- * GET|POST /api/v1/partner-request/corporate
- * GET|POST /api/v1/partner-request/corporate-packages
- */
 class PartnerRequestController extends Controller
 {
-    // ---------------------------------------------------------------
-    // GET|POST /api/v1/partner-request/restaurant
-    // Форма «Подключить ресторан» (страница /resDeliver на сайте)
-    // ---------------------------------------------------------------
+
+    public function getRestaurants(): JsonResponse
+    {
+        return $this->getByType('restaurant');
+    }
+
     public function storeRestaurant(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -59,10 +52,11 @@ class PartnerRequestController extends Controller
         ], 201);
     }
 
-    // ---------------------------------------------------------------
-    // GET|POST /api/v1/partner-request/b2b
-    // Форма «B2B доставка» (страница /b2bdeliver на сайте)
-    // ---------------------------------------------------------------
+    public function getB2B(): JsonResponse
+    {
+        return $this->getByType('b2b');
+    }
+
     public function storeB2B(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -100,10 +94,16 @@ class PartnerRequestController extends Controller
         ], 201);
     }
 
-    // ---------------------------------------------------------------
-    // GET|POST /api/v1/partner-request/corporate(-packages)
-    // Форма «Корпоративные пакеты» (страница /CorporatePackages)
-    // ---------------------------------------------------------------
+    public function getCorporate(): JsonResponse
+    {
+        return $this->getByType('corporate');
+    }
+
+    public function getCorporatePackages(): JsonResponse
+    {
+        return $this->getByType('corporate');
+    }
+
     public function storeCorporate(Request $request): JsonResponse
     {
         // Accept a few common aliases used by different landing form versions.
@@ -149,5 +149,17 @@ class PartnerRequestController extends Controller
             'message' => 'Спасибо! Ваша заявка принята, отдел продаж свяжется с вами в ближайшее время.',
             'id'      => $partner->id,
         ], 201);
+    }
+
+    private function getByType(string $type): JsonResponse
+    {
+        $partners = PartnerRequest::where('type', $type)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'data'   => $partners,
+        ], 200);
     }
 }
