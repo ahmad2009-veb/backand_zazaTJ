@@ -292,9 +292,16 @@ Route::group(['namespace' => 'Api\V1'], function () {
 
     // ✅ Заявки партнёров с лендинга zazaTJ (React)
     Route::group(['prefix' => 'partner-request'], function () {
-        Route::match(['get', 'post'], 'restaurant', 'PartnerRequestController@storeRestaurant');
-        Route::match(['get', 'post'], 'b2b',        'PartnerRequestController@storeB2B');
-        Route::match(['get', 'post'], 'corporate',  'PartnerRequestController@storeCorporate');
-        Route::match(['get', 'post'], 'corporate-packages', 'PartnerRequestController@storeCorporate');
+        Route::get('restaurant', 'PartnerRequestController@getRestaurants');
+        Route::post('restaurant', 'PartnerRequestController@storeRestaurant');
+
+        Route::get('b2b', 'PartnerRequestController@getB2B');
+        Route::post('b2b', 'PartnerRequestController@storeB2B');
+
+        Route::get('corporate', 'PartnerRequestController@getCorporate');
+        Route::post('corporate', 'PartnerRequestController@storeCorporate');
+
+        Route::get('corporate-packages', 'PartnerRequestController@getCorporatePackages');
+        Route::post('corporate-packages', 'PartnerRequestController@storeCorporate');
     });
 });
