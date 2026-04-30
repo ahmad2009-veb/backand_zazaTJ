@@ -292,16 +292,21 @@ Route::group(['namespace' => 'Api\V1'], function () {
 
     // ✅ Заявки партнёров с лендинга zazaTJ (React)
     Route::group(['prefix' => 'partner-request'], function () {
-        Route::get('restaurant', 'PartnerRequestController@getRestaurants');
-        Route::post('restaurant', 'PartnerRequestController@storeRestaurant');
+    // Restaurant
+    Route::get('restaurant/all', 'PartnerRequestController@getRestaurants'); // Илова кардани /all
+    Route::post('restaurant', 'PartnerRequestController@storeRestaurant');
 
-        Route::get('b2b', 'PartnerRequestController@getB2B');
-        Route::post('b2b', 'PartnerRequestController@storeB2B');
+    // B2B - Ин ҳамон ҷоест, ки шумо хатогӣ мегирифтед
+    Route::get('b2b/all', 'PartnerRequestController@getB2B'); // Суроғаро иваз кунед
+    Route::post('b2b', 'PartnerRequestController@storeB2B');
 
-        Route::get('corporate', 'PartnerRequestController@getCorporate');
-        Route::post('corporate', 'PartnerRequestController@storeCorporate');
+    // Corporate
+    Route::get('corporate/all', 'PartnerRequestController@getCorporate');
+    Route::post('corporate', 'PartnerRequestController@storeCorporate');
 
-        Route::get('corporate-packages', 'PartnerRequestController@getCorporatePackages');
-        Route::post('corporate-packages', 'PartnerRequestController@storeCorporate');
-    });
+    // Corporate Packages
+    Route::get('corporate-packages/all', 'PartnerRequestController@getCorporatePackages');
+    // Ин ҷоро ислоҳ кунед, то ба функсияи дуруст равад:
+    Route::post('corporate-packages', 'PartnerRequestController@storeCorporatePackages'); 
+});
 });
