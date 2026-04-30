@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class CampaignItemResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this['id'],
+            'title' => $this['title'],
+            'image' => url('storage/campaign/' . $this['image']),
+            'reward' => json_decode($this['rule']?->criteria),
+            'completed' => $this['completed']
+        ];
+    }
+}
+
+

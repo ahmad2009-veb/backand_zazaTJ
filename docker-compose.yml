@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./:/var/www
+        ports:
+            - "80:8000"
+        depends_on:
+            - mysql
+
+    mysql:
+        image: mysql:8.0.29
+        environment:
+            MYSQL_DATABASE: master_food
+            MYSQL_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: password
+        volumes:
+            - ./storage/mysql-data:/var/lib/mysql
+        ports:
+            - "3306:3306"
+networks:
+    default:
+        name: master-food-network
