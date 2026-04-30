@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PartnerRequestController extends Controller
 {
+
     public function getRestaurants(): JsonResponse
     {
         return $this->getByType('restaurant');
@@ -27,7 +28,10 @@ class PartnerRequestController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'status'  => false,
+                'errors'  => $validator->errors(),
+            ], 422);
         }
 
         $partner = PartnerRequest::create([
@@ -65,12 +69,15 @@ class PartnerRequestController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'status'  => false,
+                'errors'  => $validator->errors(),
+            ], 422);
         }
 
         $partner = PartnerRequest::create([
             'type'          => 'b2b',
-            'merchant_name' => $request->company_name,
+            'merchant_name' => $request->company_name, // нормализуем в одно поле
             'company_name'  => $request->company_name,
             'contact_name'  => $request->contact_name,
             'phone'         => $request->phone,
@@ -92,7 +99,6 @@ class PartnerRequestController extends Controller
         return $this->getByType('corporate');
     }
 
-    // Ислоҳ шуд: илова кардани функсияи намерасида
     public function getCorporatePackages(): JsonResponse
     {
         return $this->getByType('corporate');
@@ -100,17 +106,7 @@ class PartnerRequestController extends Controller
 
     public function storeCorporate(Request $request): JsonResponse
     {
-        return $this->processCorporateRequest($request);
-    }
-
-    // Ислоҳ шуд: илова кардани функсия барои захираи пакетҳо
-    public function storeCorporatePackages(Request $request): JsonResponse
-    {
-        return $this->processCorporateRequest($request);
-    }
-
-    private function processCorporateRequest(Request $request): JsonResponse
-    {
+        // Accept a few common aliases used by different landing form versions.
         $payload = [
             'contact_name' => $request->input('contact_name', $request->input('contact_person', $request->input('name'))),
             'phone'        => $request->input('phone', $request->input('phone_number')),
@@ -130,7 +126,10 @@ class PartnerRequestController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
         $partner = PartnerRequest::create([
@@ -147,18 +146,20 @@ class PartnerRequestController extends Controller
 
         return response()->json([
             'status'  => true,
-            'message' => 'Спасибо! Ваша заявка принята.',
+            'message' => 'Спасибо! Ваша заявка принята, отдел продаж свяжется с вами в ближайшее время.',
             'id'      => $partner->id,
         ], 201);
     }
 
     private function getByType(string $type): JsonResponse
     {
-        try {
-            $partners = PartnerRequest::where('type', $type)->latest()->get();
-            return response()->json(['status' => true, 'data' => $partners], 200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
-        }
+        $partners = PartnerRequest::where('type', $type)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'data'   => $partners,
+        ], 200);
     }
 }
